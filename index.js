@@ -7,7 +7,9 @@ import cors from "cors";
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: { origin: "http://localhost:5173", methods: ["GET", "POST"] },
+});
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -20,7 +22,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
-  res.sendFile(join(__dirname, "index.html"));
+  //   res.sendFile(join(__dirname, "index.html"));
 });
 
 app.get("/test", (req, res) => {
