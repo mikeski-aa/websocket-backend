@@ -34,11 +34,13 @@ io.on("connection", (socket) => {
   console.log("A user connected");
 
   // console logs sent message
+  // this prints the message in console when incoming
   socket.on("chat message", (msg) => {
     console.log("message: " + msg);
   });
 
   // emit message back to all users connected
+  // this does stuff on the server side frontend
   socket.on("chat message", (msg) => {
     io.emit("chat message", msg);
   });
