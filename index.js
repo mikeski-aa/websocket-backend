@@ -3,8 +3,8 @@ import { createServer } from "node:http";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { Server } from "socket.io";
-import { v4 as uuidv4 } from "uuid";
 import cors from "cors";
+import { roomCheck } from "./utils/roomHelpers.js";
 
 const app = express();
 const server = createServer(app);
@@ -30,7 +30,19 @@ app.get("/test", (req, res) => {
   res.json("Hey");
 });
 
+// we do it in memory for now
 let connectedUsers = [];
+
+// room structure:
+// roomid
+// user one id
+// user two id
+
+const exampleObject = {
+  roomId: "asxax123DSADzj",
+  users: ["userid1", "userid2"],
+};
+
 let roomInfo = [];
 
 io.on("connection", (socket) => {
@@ -39,14 +51,7 @@ io.on("connection", (socket) => {
   connectedUsers.push(socket.id);
 
   // if there are multiple users log information
-
-  const room = uuidv4();
-  socket.join(room);
-  const infoObject = {
-    roomId: room,
-    userId: socket.id,
-  };
-  roomInfo.push(infoObject);
+  roomInfo = roomCheck(socket, roomInfo);
   console.log(roomInfo);
 
   // emits list of users to NEW USER
@@ -76,7 +81,7 @@ io.on("connection", (socket) => {
     io.emit("users", connectedUsers);
     console.log("Connected users: " + connectedUsers);
 
-    roomInfo = roomInfo.filter((item) => item.userId != socket.id);
+    // roomInfo = roomInfo.filter((item) => item.userId != socket.id);
   });
 });
 
