@@ -7,28 +7,70 @@ let testArr = [
   },
   {
     roomId: "asxax123DSADSzzzzDzj",
-    users: ["userid1"],
+    users: ["userid1", "uuasda3"],
+  },
+  {
+    roomId: "asxax123a3DSADSzzzzDzj",
+    users: ["useri3d1"],
+  },
+  {
+    roomId: "asxax122z3DSADSzzzzDzj",
+    users: ["userids1", "uuasd3a3"],
   },
 ];
 
-function testFunc(testArr) {
-  let tempArray = [];
-  testArr.map((item) => tempArray.push(item));
+let newArr = [];
 
+function testFunc(testArr) {
   console.log(testArr);
-  if (testArr.length == 0) {
+
+  if (testArr.length === 0) {
+    console.log("zero length detected");
     const room = uuidv4();
     const infoObject = {
       roomId: room,
       users: [uuidv4()],
     };
 
-    const newRooms = tempArray.push(infoObject);
-    console.log(newRooms);
-    return newRooms;
+    const xArr = [infoObject];
+
+    return xArr;
+  } else {
+    console.log("array has items in it");
+
+    // filter for empty rooms
+    // add new user to empty room
+    const filtered = testArr.filter((item) => item.users.length < 2);
+
+    if (filtered.length > 0) {
+      filtered[0].users.push(uuidv4());
+
+      console.log("//////////");
+      console.log(testArr);
+      // const remappedArray = testArr.map((item) => {
+      //   if (item.roomId === filtered[0].roomId) {
+      //     item = filtered[0];
+      //   }
+      // });
+
+      // console.log(remappedArray);
+
+      return testArr;
+    } else {
+      console.log("zero space detected");
+      const room = uuidv4();
+      const infoObject = {
+        roomId: room,
+        users: [uuidv4()],
+      };
+
+      testArr.push(infoObject);
+
+      return testArr;
+    }
   }
 }
 
-testArr = testFunc(testArr);
-
-console.log(testArr);
+newArr = testFunc(testArr);
+console.log(newArr);
+// testFunc(testArr);
