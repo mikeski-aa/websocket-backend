@@ -5,6 +5,7 @@ import { dirname, join } from "node:path";
 import { Server } from "socket.io";
 import cors from "cors";
 import { roomCheck } from "./utils/roomHelpers.js";
+import { execPath } from "node:process";
 
 const app = express();
 const server = createServer(app);
@@ -53,11 +54,7 @@ io.on("connection", (socket) => {
   // if there are multiple users log information
   roomInfo = roomCheck(socket, roomInfo);
   console.log("///////////////////////////");
-  console.log("///////////////////////////");
-  console.log("///////////////////////////");
   console.log(roomInfo);
-  console.log("///////////////////////////");
-  console.log("///////////////////////////");
   console.log("///////////////////////////");
 
   // emits list of users to NEW USER
@@ -80,12 +77,29 @@ io.on("connection", (socket) => {
   });
 
   // informs of a user disconnecting
+  // upon disconnecting, the socket will automatically leave all connected rooms all I need to do is update the logic
+  // but we need to disconnect the other socket if it exists!
   socket.on("disconnect", () => {
     console.log("A user disconnected");
     connectedUsers = connectedUsers.filter((user) => user != socket.id);
     // emits list to all users, except user
     io.emit("users", connectedUsers);
     console.log("Connected users: " + connectedUsers);
+
+    console.log(socket.id);
+
+    const found = roomInfo.find((element) => element.users.includes(socket.id));
+    if (found) {
+      found.users.forEach((element) => {
+        if (element != socket.id) {
+          const foundSocket = io.sockets.sockets.get(element);
+          foundSocket.leave(found.roomId);
+          // foundSocket.disconnect();
+        }
+      });
+    }
+
+    roomInfo.filter((item) => item.roomId != found.roomId);
   });
 });
 
