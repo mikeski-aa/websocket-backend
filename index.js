@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { Server } from "socket.io";
+import { v4 as uuidv4 } from "uuid";
 import cors from "cors";
 
 const app = express();
@@ -30,11 +31,23 @@ app.get("/test", (req, res) => {
 });
 
 let connectedUsers = [];
+let roomInfo = [];
 
 io.on("connection", (socket) => {
   // logs a user has connected to socket
   console.log("A user connected");
   connectedUsers.push(socket.id);
+
+  // if there are multiple users log information
+
+  const room = uuidv4();
+  socket.join(room);
+  const infoObject = {
+    roomId: room,
+    userId: socket.id,
+  };
+  roomInfo.push(infoObject);
+  console.log(roomInfo);
 
   // emits list of users to NEW USER
   socket.emit("users", connectedUsers);
@@ -62,6 +75,8 @@ io.on("connection", (socket) => {
     // emits list to all users, except user
     io.emit("users", connectedUsers);
     console.log("Connected users: " + connectedUsers);
+
+    roomInfo = roomInfo.filter((item) => item.userId != socket.id);
   });
 });
 
