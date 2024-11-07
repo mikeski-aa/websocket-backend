@@ -52,7 +52,13 @@ io.on("connection", (socket) => {
 
   // if there are multiple users log information
   roomInfo = roomCheck(socket, roomInfo);
+  console.log("///////////////////////////");
+  console.log("///////////////////////////");
+  console.log("///////////////////////////");
   console.log(roomInfo);
+  console.log("///////////////////////////");
+  console.log("///////////////////////////");
+  console.log("///////////////////////////");
 
   // emits list of users to NEW USER
   socket.emit("users", connectedUsers);
@@ -80,8 +86,6 @@ io.on("connection", (socket) => {
     // emits list to all users, except user
     io.emit("users", connectedUsers);
     console.log("Connected users: " + connectedUsers);
-
-    // roomInfo = roomInfo.filter((item) => item.userId != socket.id);
   });
 });
 
