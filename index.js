@@ -29,10 +29,20 @@ app.get("/test", (req, res) => {
   res.json("Hey");
 });
 
+let connectedUsers = [];
+
 io.on("connection", (socket) => {
   // logs a user has connected to socket
   console.log("A user connected");
+  connectedUsers.push(socket.id);
 
+  // emits list of users to NEW USER
+  socket.emit("users", connectedUsers);
+
+  // emits list of users to all users
+  io.emit("users", connectedUsers);
+
+  console.log("Connected users: " + connectedUsers);
   // console logs sent message
   // this prints the message in console when incoming
   socket.on("chat message", (msg) => {
@@ -48,6 +58,10 @@ io.on("connection", (socket) => {
   // informs of a user disconnecting
   socket.on("disconnect", () => {
     console.log("A user disconnected");
+    connectedUsers = connectedUsers.filter((user) => user != socket.id);
+    // emits list to all users, except user
+    io.emit("users", connectedUsers);
+    console.log("Connected users: " + connectedUsers);
   });
 });
 
