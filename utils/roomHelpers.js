@@ -54,7 +54,16 @@ function createRoom(socket, roomArray) {
 
 export { roomCheck };
 
-let testArr = ["xdxd"];
+let testArr = [
+  {
+    roomId: "asxax123DSADzj",
+    users: ["userid1", "userid2"],
+  },
+  {
+    roomId: "asxax123DSADSzzzzDzj",
+    users: ["userid1"],
+  },
+];
 
 function testFunc(testArr) {
   let tempArray = [];
