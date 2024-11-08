@@ -22,12 +22,16 @@ function roomCheck(socket, roomArray, io) {
     filteredArray[0].users.push(socket.id);
 
     // inform both users that the other user has joined
+    // pass X or Y to parties too
+    const markerObject = generateXYmarkers();
     const otherSocket = io.sockets.sockets.get(filteredArray[0].users[0]);
     socket.to(filteredArray[0].roomId).emit("user join", "user joined room");
+    socket.emit("playerMarker", markerObject.one);
+
     otherSocket
       .to(filteredArray[0].roomId)
       .emit("user join", "user joined room");
-
+    otherSocket.emit("playerMarker", markerObject.two);
     return roomArray;
   } else {
     // we create a new room
@@ -46,6 +50,16 @@ function createRoom(socket, roomArray) {
   };
 
   return infoObject;
+}
+
+function generateXYmarkers() {
+  const number = Math.round(Math.random());
+
+  if ((number = 0)) {
+    return { one: "X", two: "O" };
+  } else {
+    return { one: "O", two: "X" };
+  }
 }
 
 export { roomCheck };
