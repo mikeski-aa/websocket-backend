@@ -98,11 +98,13 @@ io.on("connection", (socket) => {
 
     const found = roomInfo.find((element) => element.users.includes(socket.id));
 
+    // on one person disconnecting, the room will be closed.
     if (found) {
       found.users.forEach((element) => {
         if (element != socket.id) {
           const foundSocket = io.sockets.sockets.get(element);
           foundSocket.leave(found.roomId);
+          foundSocket.emit("warning", `Room is being closed! ${found.roomId}`);
           // foundSocket.disconnect();
         }
       });
