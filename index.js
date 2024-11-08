@@ -41,6 +41,11 @@ let connectedUsers = [];
 
 let roomInfo = [];
 
+function sendRoomId(socketid) {
+  const found = roomInfo.find((element) => element.users.includes(socketid));
+  return found.roomId;
+}
+
 io.on("connection", (socket) => {
   const logActiveRooms = () => {
     console.log("Active rooms:");
@@ -54,13 +59,14 @@ io.on("connection", (socket) => {
   connectedUsers.push(socket.id);
 
   // if there are multiple users log information
-  roomInfo = roomCheck(socket, roomInfo);
+  roomInfo = roomCheck(socket, roomInfo, io);
   console.log("///////////////////////////");
   console.log(roomInfo);
   console.log("///////////////////////////");
 
   // Log active rooms when a new user connects
   logActiveRooms();
+  socket.emit("roomId", sendRoomId(socket.id));
 
   // emit rooms
   io.emit("rooms", roomInfo);
