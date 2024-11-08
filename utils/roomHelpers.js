@@ -40,4 +40,35 @@ function createRoom(socket, roomArray) {
   return infoObject;
 }
 
-export { roomCheck };
+function fakeRoomCheck(socket, roomArray) {
+  if (typeof roomArray == "undefined" || roomArray.length === 0) {
+    const newRooms = [createRoomFake(socket)];
+    return newRooms;
+  }
+
+  let filteredArray = roomArray.filter((item) => item.users.length < 2);
+  if (filteredArray.length > 0) {
+    socket.join(filteredArray[0].roomId);
+    filteredArray[0].users.push(socket.id);
+
+    return roomArray;
+  } else {
+    // we create a new room
+    const newRooms = createRoom(socket, roomArray);
+    roomArray.push(newRooms);
+    return roomArray;
+  }
+}
+
+function createRoomFake(socket) {
+  const roomid = uuidv4();
+
+  const roomObject = {
+    roomId: roomid,
+    users: [socket.id],
+  };
+
+  return roomObject;
+}
+
+export { roomCheck, fakeRoomCheck };

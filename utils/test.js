@@ -47,14 +47,6 @@ function testFunc(testArr) {
 
       console.log("//////////");
       console.log(testArr);
-      // const remappedArray = testArr.map((item) => {
-      //   if (item.roomId === filtered[0].roomId) {
-      //     item = filtered[0];
-      //   }
-      // });
-
-      // console.log(remappedArray);
-
       return testArr;
     } else {
       console.log("zero space detected");

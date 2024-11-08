@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { Server } from "socket.io";
 import cors from "cors";
-import { roomCheck } from "./utils/roomHelpers.js";
+import { fakeRoomCheck, roomCheck } from "./utils/roomHelpers.js";
 import { execPath } from "node:process";
 
 const app = express();
@@ -52,10 +52,13 @@ io.on("connection", (socket) => {
   connectedUsers.push(socket.id);
 
   // if there are multiple users log information
-  roomInfo = roomCheck(socket, roomInfo);
-  console.log("///////////////////////////");
+  // roomInfo = roomCheck(socket, roomInfo);
+  // console.log("///////////////////////////");
+  // console.log(roomInfo);
+  // console.log("///////////////////////////");
+
+  roomInfo = fakeRoomCheck(socket, roomInfo);
   console.log(roomInfo);
-  console.log("///////////////////////////");
 
   // emits list of users to NEW USER
   socket.emit("users", connectedUsers);
@@ -86,20 +89,26 @@ io.on("connection", (socket) => {
     io.emit("users", connectedUsers);
     console.log("Connected users: " + connectedUsers);
 
-    console.log(socket.id);
+    // console.log(socket.id);
 
+    console.log(roomInfo);
     const found = roomInfo.find((element) => element.users.includes(socket.id));
-    if (found) {
-      found.users.forEach((element) => {
-        if (element != socket.id) {
-          const foundSocket = io.sockets.sockets.get(element);
-          foundSocket.leave(found.roomId);
-          // foundSocket.disconnect();
-        }
-      });
-    }
+    console.log(found);
 
-    roomInfo.filter((item) => item.roomId != found.roomId);
+    roomInfo = roomInfo.filter((item) => item.roomId != found.roomId);
+    console.log(roomInfo);
+
+    // if (found) {
+    //   found.users.forEach((element) => {
+    //     if (element != socket.id) {
+    //       const foundSocket = io.sockets.sockets.get(element);
+    //       foundSocket.leave(found.roomId);
+    //       // foundSocket.disconnect();
+    //     }
+    //   });
+    // }
+
+    // roomInfo.filter((item) => item.roomId != found.roomId);
   });
 });
 
