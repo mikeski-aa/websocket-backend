@@ -17,6 +17,7 @@ function roomCheck(socket, roomArray) {
   // person joins room.
   // now we need to update the array to reflect the join.
   if (filteredArray.length > 0) {
+    console.log("I should not be runnign on first");
     socket.join(filteredArray[0].roomId);
     filteredArray[0].users.push(socket.id);
 
@@ -40,35 +41,35 @@ function createRoom(socket, roomArray) {
   return infoObject;
 }
 
-function fakeRoomCheck(socket, roomArray) {
-  if (typeof roomArray == "undefined" || roomArray.length === 0) {
-    const newRooms = [createRoomFake(socket)];
-    return newRooms;
-  }
+// function fakeRoomCheck(socket, roomArray) {
+//   if (typeof roomArray == "undefined" || roomArray.length === 0) {
+//     const newRooms = [createRoomFake(socket)];
+//     return newRooms;
+//   }
 
-  let filteredArray = roomArray.filter((item) => item.users.length < 2);
-  if (filteredArray.length > 0) {
-    socket.join(filteredArray[0].roomId);
-    filteredArray[0].users.push(socket.id);
+//   let filteredArray = roomArray.filter((item) => item.users.length < 2);
+//   if (filteredArray.length > 0) {
+//     socket.join(filteredArray[0].roomId);
+//     filteredArray[0].users.push(socket.id);
 
-    return roomArray;
-  } else {
-    // we create a new room
-    const newRooms = createRoom(socket, roomArray);
-    roomArray.push(newRooms);
-    return roomArray;
-  }
-}
+//     return roomArray;
+//   } else {
+//     // we create a new room
+//     const newRooms = createRoom(socket, roomArray);
+//     roomArray.push(newRooms);
+//     return roomArray;
+//   }
+// }
 
-function createRoomFake(socket) {
-  const roomid = uuidv4();
+// function createRoomFake(socket) {
+//   const roomid = uuidv4();
 
-  const roomObject = {
-    roomId: roomid,
-    users: [socket.id],
-  };
+//   const roomObject = {
+//     roomId: roomid,
+//     users: [socket.id],
+//   };
 
-  return roomObject;
-}
+//   return roomObject;
+// }
 
-export { roomCheck, fakeRoomCheck };
+export { roomCheck };

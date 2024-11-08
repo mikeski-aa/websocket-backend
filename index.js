@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { Server } from "socket.io";
 import cors from "cors";
-import { fakeRoomCheck, roomCheck } from "./utils/roomHelpers.js";
+import { roomCheck } from "./utils/roomHelpers.js";
 import { execPath } from "node:process";
 
 const app = express();
@@ -39,26 +39,31 @@ let connectedUsers = [];
 // user one id
 // user two id
 
-const exampleObject = {
-  roomId: "asxax123DSADzj",
-  users: ["userid1", "userid2"],
-};
-
 let roomInfo = [];
 
 io.on("connection", (socket) => {
+  const logActiveRooms = () => {
+    console.log("Active rooms:");
+    io.sockets.adapter.rooms.forEach((sockets, roomId) => {
+      console.log(`Room: ${roomId} - Members: [${[...sockets].join(", ")}]`);
+    });
+  };
+
   // logs a user has connected to socket
   console.log("A user connected");
   connectedUsers.push(socket.id);
 
   // if there are multiple users log information
-  // roomInfo = roomCheck(socket, roomInfo);
-  // console.log("///////////////////////////");
-  // console.log(roomInfo);
-  // console.log("///////////////////////////");
-
-  roomInfo = fakeRoomCheck(socket, roomInfo);
+  roomInfo = roomCheck(socket, roomInfo);
+  console.log("///////////////////////////");
   console.log(roomInfo);
+  console.log("///////////////////////////");
+
+  // Log active rooms when a new user connects
+  logActiveRooms();
+
+  // emit rooms
+  io.emit("rooms", roomInfo);
 
   // emits list of users to NEW USER
   socket.emit("users", connectedUsers);
@@ -91,24 +96,27 @@ io.on("connection", (socket) => {
 
     // console.log(socket.id);
 
-    console.log(roomInfo);
     const found = roomInfo.find((element) => element.users.includes(socket.id));
-    console.log(found);
 
-    roomInfo = roomInfo.filter((item) => item.roomId != found.roomId);
+    if (found) {
+      found.users.forEach((element) => {
+        if (element != socket.id) {
+          const foundSocket = io.sockets.sockets.get(element);
+          foundSocket.leave(found.roomId);
+          // foundSocket.disconnect();
+        }
+      });
+
+      roomInfo = roomInfo.filter((item) => item.roomId != found.roomId);
+    }
+
+    socket.emit("rooms", roomInfo);
+    console.log("////////");
+    console.log("room after delete: ");
     console.log(roomInfo);
 
-    // if (found) {
-    //   found.users.forEach((element) => {
-    //     if (element != socket.id) {
-    //       const foundSocket = io.sockets.sockets.get(element);
-    //       foundSocket.leave(found.roomId);
-    //       // foundSocket.disconnect();
-    //     }
-    //   });
-    // }
-
-    // roomInfo.filter((item) => item.roomId != found.roomId);
+    // Log active rooms when a new user connects
+    logActiveRooms();
   });
 });
 
