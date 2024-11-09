@@ -112,4 +112,10 @@ function beginGame(io, socket, filteredArray) {
   }
 }
 
-export { roomCheck };
+function roomExtractor(rooms, id) {
+  const room = rooms.find((element) => element.users.includes(id));
+
+  return room;
+}
+
+export { roomCheck, roomExtractor };

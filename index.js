@@ -4,8 +4,15 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { Server } from "socket.io";
 import cors from "cors";
-import { roomCheck } from "./utils/roomHelpers.js";
+import { roomCheck, roomExtractor } from "./utils/roomHelpers.js";
 import { execPath } from "node:process";
+import {
+  disableMoveForCurrentSocket,
+  enableMoveForNext,
+  moveCheck,
+  moveQueueUp,
+  sendNewBoard,
+} from "./utils/gameLogic.js";
 
 const app = express();
 const server = createServer(app);
@@ -47,25 +54,20 @@ function sendRoomId(socketid) {
 }
 
 io.on("connection", (socket) => {
-  const logActiveRooms = () => {
-    console.log("Active rooms:");
-    io.sockets.adapter.rooms.forEach((sockets, roomId) => {
-      console.log(`Room: ${roomId} - Members: [${[...sockets].join(", ")}]`);
-    });
-  };
-
   // logs a user has connected to socket
   console.log("A user connected");
   connectedUsers.push(socket.id);
 
-  // if there are multiple users log information
+  // when a new user connects we assign them to a game room.
   roomInfo = roomCheck(socket, roomInfo, io);
+
+  // Log active rooms when a new user connects
+  logActiveRooms(io);
+
   console.log("///////////////////////////");
   console.log(roomInfo);
   console.log("///////////////////////////");
 
-  // Log active rooms when a new user connects
-  logActiveRooms();
   socket.emit("roomId", sendRoomId(socket.id));
 
   // emit rooms
@@ -88,6 +90,24 @@ io.on("connection", (socket) => {
   // this does stuff on the server side frontend
   socket.on("chat message", (msg) => {
     io.emit("chat message", msg);
+  });
+
+  // handle handle incoming user click
+  // need to validate the coordinates are:
+  // 0. Extract correct room info
+  // 1. game isnt over
+  // 2. coordiantes are free
+  // 3. send updated board to all users
+  socket.on("userMove", (coordinates) => {
+    const room = roomExtractor(roomInfo, socket.id);
+    const check = moveCheck(room, coordinates);
+
+    if (check) {
+      disableMoveForCurrentSocket(socket);
+      moveQueueUp(room);
+      enableMoveForNext(room, io);
+      sendNewBoard(room, io);
+    }
   });
 
   // informs of a user disconnecting
@@ -124,10 +144,18 @@ io.on("connection", (socket) => {
     console.log("room after delete: ");
     console.log(roomInfo);
 
-    // Log active rooms when a new user connects
-    logActiveRooms();
+    // Log active rooms when a new user disconnects
+    logActiveRooms(io);
   });
 });
+
+// logging function
+function logActiveRooms(io) {
+  console.log("Active rooms:");
+  io.sockets.adapter.rooms.forEach((sockets, roomId) => {
+    console.log(`Room: ${roomId} - Members: [${[...sockets].join(", ")}]`);
+  });
+}
 
 server.listen(3000, () => {
   console.log("Server running on port 3000");
