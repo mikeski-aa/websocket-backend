@@ -1,5 +1,5 @@
-import { Socket } from "socket.io";
 import { v4 as uuidv4 } from "uuid";
+import { genBoard } from "./genBoard.js";
 
 function roomCheck(socket, roomArray, io) {
   console.log(roomArray);
@@ -23,6 +23,7 @@ function roomCheck(socket, roomArray, io) {
 
     // inform both users that the other user has joined
     // pass X or Y to parties too
+    // begin the game
     beginGame(io, socket, filteredArray);
     return roomArray;
   } else {
@@ -33,17 +34,15 @@ function roomCheck(socket, roomArray, io) {
   }
 }
 
-function createRoom(socket, roomArray) {
+// socket joins room generated.
+function createRoom(socket) {
   const room = uuidv4();
   socket.join(room);
+
   const infoObject = {
     roomId: room,
     users: [socket.id],
-    board: [
-      ["", "", ""],
-      ["", "", ""],
-      ["", "", ""],
-    ],
+    board: genBoard(),
   };
 
   return infoObject;
@@ -62,11 +61,17 @@ function generateXYmarkers() {
 function beginGame(io, socket, filteredArray) {
   const markerObject = generateXYmarkers();
   const otherSocket = io.sockets.sockets.get(filteredArray[0].users[0]);
-  socket.to(filteredArray[0].roomId).emit("user join", "user joined room");
-  socket.emit("playerMarker", markerObject.one);
 
-  otherSocket.to(filteredArray[0].roomId).emit("user join", "user joined room");
+  // emit player markers to two players in the room
+  socket.emit("playerMarker", markerObject.one);
   otherSocket.emit("playerMarker", markerObject.two);
+
+  // inform frontend that both members joined and room is full
+  io.to(filteredArray[0].roomId).emit("user join", "user joined room");
+
+  // emit board status to both parties
+  // in order to do that we need to broadcast on io instead of individual socket!
+  io.to(filteredArray[0].roomId).emit("initialBoard", filteredArray[0].board);
 }
 
 export { roomCheck };
