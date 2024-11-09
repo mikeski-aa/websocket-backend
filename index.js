@@ -12,6 +12,7 @@ import {
   moveCheck,
   moveQueueUp,
   sendNewBoard,
+  winCheck,
 } from "./utils/gameLogic.js";
 
 const app = express();
@@ -101,6 +102,7 @@ io.on("connection", (socket) => {
   socket.on("userMove", (coordinates) => {
     const room = roomExtractor(roomInfo, socket.id);
     const check = moveCheck(room, coordinates);
+    winCheck(room);
 
     if (check) {
       disableMoveForCurrentSocket(socket);
