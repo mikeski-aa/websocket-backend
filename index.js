@@ -105,6 +105,7 @@ io.on("connection", (socket) => {
     const found = roomInfo.find((element) => element.users.includes(socket.id));
 
     // on one person disconnecting, the room will be closed.
+    // henc we go through find the other room participant and disconnect him too
     if (found) {
       found.users.forEach((element) => {
         if (element != socket.id) {
