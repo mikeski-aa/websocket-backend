@@ -56,80 +56,34 @@ function sendNewBoard(room, io) {
 // [0, 0], [1, 1], [2, 2]
 // [0, 2], [1, 1], [2, 0]
 function winCheck(room) {
-  // check vertical first
-  const filteredX = room.board.filter((element) => element.marker == "X");
-  const filteredO = room.board.filter((element) => element.marker == "O");
+  // refactor
+  const markers = ["X", "O"];
 
-  let tempHolder = [];
+  const checkDiag = (array) => {
+    const diagEquals = array.filter((item) => item.x === item.y);
+    const diagTwo = array.filter((item) => item.x + item.y === 2);
 
-  const vertCheckX = filteredX.filter((item) => item.x === 0);
-  const horiCheckX = filteredX.filter((item) => item.y === 0);
+    return diagEquals.length === 3 || diagTwo.length === 3;
+  };
 
-  const vertCheckY = filteredO.filter((item) => item.x === 0);
-  const horiCheckY = filteredO.filter((item) => item.y === 0);
+  const checkHV = (array) => {
+    const verticalFilter = array.filter((element) => element.x === 0);
+    const horizontalFilter = array.filter((element) => element.y === 0);
 
-  const diagCheckXOne = [];
-  const diagCheckXTwo = [];
+    return verticalFilter.length === 3 || horizontalFilter.length === 3;
+  };
 
-  // loop to check diags for X filter
-  for (let k = 0; k < filteredX.length; k++) {
-    if (
-      (filteredX[k].x === 0 && filteredX[k].y === 0) ||
-      (filteredX[k].x === 1 && filteredX[k].y === 1) ||
-      (filteredX[k].x === 2 && filteredX[k].y === 2)
-    ) {
-      diagCheckXOne.push(filteredX[k]);
+  markers.forEach((marker) => {
+    const filteredItems = room.board.filter(
+      (element) => element.marker == marker
+    );
+
+    if (checkHV(filteredItems) || checkDiag(filteredItems)) {
+      console.log("winner found " + marker);
+    } else {
+      console.log("no winner");
     }
-  }
-
-  for (let k = 0; k < filteredX.length; k++) {
-    if (
-      (filteredX[k].x === 0 && filteredX[k].y === 2) ||
-      (filteredX[k].x === 1 && filteredX[k].y === 1) ||
-      (filteredX[k].x === 2 && filteredX[k].y === 0)
-    ) {
-      diagCheckXTwo.push(filteredX[k]);
-    }
-  }
-
-  const diagCheckOOne = [];
-  const diagCheckOTwo = [];
-
-  // loop to check diag for O
-  for (let k = 0; k < filteredO.length; k++) {
-    if (
-      (filteredO[k].x === 0 && filteredO[k].y === 0) ||
-      (filteredO[k].x === 1 && filteredO[k].y === 1) ||
-      (filteredO[k].x === 2 && filteredO[k].y === 2)
-    ) {
-      diagCheckOOne.push(filteredX[k]);
-    }
-  }
-
-  for (let k = 0; k < filteredO.length; k++) {
-    if (
-      (filteredO[k].x === 0 && filteredO[k].y === 2) ||
-      (filteredO[k].x === 1 && filteredO[k].y === 1) ||
-      (filteredO[k].x === 2 && filteredO[k].y === 0)
-    ) {
-      diagCheckOTwo.push(filteredX[k]);
-    }
-  }
-
-  if (
-    vertCheckX.length === 3 ||
-    horiCheckX.length === 3 ||
-    vertCheckY.length === 3 ||
-    horiCheckY.length === 3 ||
-    diagCheckXOne.length === 3 ||
-    diagCheckXTwo.length === 3 ||
-    diagCheckOOne.length === 3 ||
-    diagCheckOTwo.length === 3
-  ) {
-    console.log("winner found");
-  } else {
-    console.log("no winner");
-  }
+  });
 }
 
 export {
