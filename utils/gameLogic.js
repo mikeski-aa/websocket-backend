@@ -30,15 +30,32 @@ function moveQueueUp(room) {
   room.moveQueue.splice(0, 1);
 }
 
+// this will crash on 9th move fix it
 function enableMoveForNext(room, io) {
   const nextSocket = io.sockets.sockets.get(room.moveQueue[0]);
 
   nextSocket.emit("firstMove", true);
 }
 
+// send updated board to be rendered by both parties
 function sendNewBoard(room, io) {
   io.to(room.roomId).emit("initialBoard", room.board);
 }
+
+// check for win condition
+// diagonal, horizontal, vertical
+// vert
+// [0, 0], [0, 1], [0, 2]
+// [1, 0], [1, 1], [1, 2]
+// [2, 0], [2, 1], [2, 2]
+// horiz
+// [0, 0], [1, 0], [2, 0]
+// [0, 1], [1, 1], [2, 1]
+// [0, 2], [1, 2], [2, 2]
+// diag
+// [0, 0], [1, 1], [2, 2]
+// [0, 2], [1, 1], [2, 0]
+function winCheck(board) {}
 
 export {
   moveCheck,
