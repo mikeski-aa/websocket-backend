@@ -43,6 +43,7 @@ function createRoom(socket) {
     roomId: room,
     users: [socket.id],
     board: genBoard(),
+    moveQueue: [],
   };
 
   return infoObject;
@@ -99,6 +100,13 @@ function beginGame(io, socket, filteredArray) {
 
   // inform frontend that both members joined and room is full
   io.to(filteredArray[0].roomId).emit("user join", "user joined room");
+
+  // depending who has the first position in the queue, send them the right to move first:
+  if (moveOrder[0] === socket.id) {
+    socket.emit("firstMove", true);
+  } else {
+    otherSocket.emit("fisrtMove", true);
+  }
 }
 
 export { roomCheck };
