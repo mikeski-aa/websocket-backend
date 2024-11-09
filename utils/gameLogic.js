@@ -9,8 +9,6 @@ function moveCheck(room, sentItem) {
     (element) =>
       element.x === sentItem.coords[0] && element.y === sentItem.coords[1]
   );
-  console.log("element found!");
-  console.log(element);
 
   if (element.marker === "") {
     element.marker = sentItem.playerMarker;
@@ -32,9 +30,12 @@ function moveQueueUp(room) {
 
 // this will crash on 9th move fix it
 function enableMoveForNext(room, io) {
-  const nextSocket = io.sockets.sockets.get(room.moveQueue[0]);
+  if (room.moveQueue.length > 0) {
+    const nextSocket = io.sockets.sockets.get(room.moveQueue[0]);
 
-  nextSocket.emit("firstMove", true);
+    nextSocket.emit("firstMove", true);
+  } else {
+  }
 }
 
 // send updated board to be rendered by both parties
@@ -42,22 +43,11 @@ function sendNewBoard(room, io) {
   io.to(room.roomId).emit("initialBoard", room.board);
 }
 
-// check for win condition
-// diagonal, horizontal, vertical
-// vert
-// [0, 0], [0, 1], [0, 2]
-// [1, 0], [1, 1], [1, 2]
-// [2, 0], [2, 1], [2, 2]
-// horiz
-// [0, 0], [1, 0], [2, 0]
-// [0, 1], [1, 1], [2, 1]
-// [0, 2], [1, 2], [2, 2]
-// diag
-// [0, 0], [1, 1], [2, 2]
-// [0, 2], [1, 1], [2, 0]
+// checking for win condition
 function winCheck(room) {
-  // refactor
+  // refactored
   const markers = ["X", "O"];
+  let isWinner = false;
 
   const checkDiag = (array) => {
     const diagEquals = array.filter((item) => item.x === item.y);
@@ -66,11 +56,16 @@ function winCheck(room) {
     return diagEquals.length === 3 || diagTwo.length === 3;
   };
 
+  // for loop required, we need go fo from 0 - 2
   const checkHV = (array) => {
-    const verticalFilter = array.filter((element) => element.x === 0);
-    const horizontalFilter = array.filter((element) => element.y === 0);
+    for (let k = 0; k < 3; k++) {
+      const verticalFilter = array.filter((element) => element.x === k);
+      const horizontalFilter = array.filter((element) => element.y === k);
 
-    return verticalFilter.length === 3 || horizontalFilter.length === 3;
+      if (verticalFilter.length === 3 || horizontalFilter.length === 3) {
+        return true;
+      }
+    }
   };
 
   markers.forEach((marker) => {
@@ -78,12 +73,19 @@ function winCheck(room) {
       (element) => element.marker == marker
     );
 
+    console.log(filteredItems);
+
     if (checkHV(filteredItems) || checkDiag(filteredItems)) {
       console.log("winner found " + marker);
+      return (isWinner = true);
     } else {
       console.log("no winner");
     }
   });
+
+  console.log("is winner");
+  console.log(isWinner);
+  return isWinner;
 }
 
 export {
@@ -97,14 +99,14 @@ export {
 
 let board = [
   { x: 0, y: 0, marker: "X" },
-  { x: 1, y: 0, marker: "X" },
-  { x: 2, y: 0, marker: "O" },
+  { x: 1, y: 0, marker: "O" },
+  { x: 2, y: 0, marker: "X" },
   { x: 0, y: 1, marker: "O" },
-  { x: 1, y: 1, marker: "O" },
+  { x: 1, y: 1, marker: "X" },
   { x: 2, y: 1, marker: "" },
   { x: 0, y: 2, marker: "O" },
   { x: 1, y: 2, marker: "O" },
-  { x: 2, y: 2, marker: "" },
+  { x: 2, y: 2, marker: "X" },
 ];
 
 let room = {

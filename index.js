@@ -102,13 +102,20 @@ io.on("connection", (socket) => {
   socket.on("userMove", (coordinates) => {
     const room = roomExtractor(roomInfo, socket.id);
     const check = moveCheck(room, coordinates);
-    winCheck(room);
+    const isOver = winCheck(room);
 
-    if (check) {
-      disableMoveForCurrentSocket(socket);
-      moveQueueUp(room);
-      enableMoveForNext(room, io);
+    console.log("////////////////////////////////// HEELLOO?");
+    if (isOver) {
+      console.log("game oveR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       sendNewBoard(room, io);
+      io.to(room.roomId).emit("gameOver", "GAME OVER!!!!!");
+    } else {
+      if (check) {
+        disableMoveForCurrentSocket(socket);
+        moveQueueUp(room);
+        enableMoveForNext(room, io);
+        sendNewBoard(room, io);
+      }
     }
   });
 
