@@ -90,6 +90,9 @@ function beginGame(io, socket, filteredArray) {
   const otherSocket = io.sockets.sockets.get(filteredArray[0].users[0]);
   const moveOrder = generatePlayerQueue(socket.id, otherSocket.id);
 
+  // set move order as part of the room object's move queue
+  filteredArray[0].moveQueue = moveOrder;
+
   // emit player markers to two players in the room
   socket.emit("playerMarker", markerObject.one);
   otherSocket.emit("playerMarker", markerObject.two);
@@ -105,7 +108,7 @@ function beginGame(io, socket, filteredArray) {
   if (moveOrder[0] === socket.id) {
     socket.emit("firstMove", true);
   } else {
-    otherSocket.emit("fisrtMove", true);
+    otherSocket.emit("firstMove", true);
   }
 }
 
