@@ -108,8 +108,16 @@ io.on("connection", (socket) => {
     if (isOver) {
       console.log("game oveR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       sendNewBoard(room, io);
-      io.to(room.roomId).emit("gameOver", "GAME OVER!!!!!");
+      io.to(room.roomId).emit("firstMove", false);
+      io.to(room.roomId).emit("gameOver", `Game over ${socket.id} wins!`);
+      console.log(room.moveQueue);
     } else {
+      // if no winner, and only one item in queue left, means this is a draw
+      if (room.moveQueue.length === 1) {
+        io.to(room.roomId).emit("firstMove", false);
+        io.to(room.roomId).emit("gameOver", "DRAW!");
+      }
+
       if (check) {
         disableMoveForCurrentSocket(socket);
         moveQueueUp(room);

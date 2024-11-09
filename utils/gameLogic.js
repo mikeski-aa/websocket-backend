@@ -113,4 +113,4 @@ let room = {
   board: board,
 };
 
-winCheck(room);
+// winCheck(room);
