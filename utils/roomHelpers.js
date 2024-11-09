@@ -58,20 +58,47 @@ function generateXYmarkers() {
   }
 }
 
+function generatePlayerQueue(idOne, idTwo) {
+  const number = Math.round(Math.random());
+  const moveQueue = [];
+
+  if (number === 0) {
+    for (let x = 0; x < 9; x++) {
+      if (x % 2 === 0) {
+        moveQueue.push(idOne);
+      } else {
+        moveQueue.push(idTwo);
+      }
+    }
+
+    return moveQueue;
+  } else {
+    for (let x = 0; x < 9; x++) {
+      if (x % 2 === 1) {
+        moveQueue.push(idOne);
+      } else {
+        moveQueue.push(idTwo);
+      }
+    }
+    return moveQueue;
+  }
+}
+
 function beginGame(io, socket, filteredArray) {
   const markerObject = generateXYmarkers();
   const otherSocket = io.sockets.sockets.get(filteredArray[0].users[0]);
+  const moveOrder = generatePlayerQueue(socket.id, otherSocket.id);
 
   // emit player markers to two players in the room
   socket.emit("playerMarker", markerObject.one);
   otherSocket.emit("playerMarker", markerObject.two);
 
-  // inform frontend that both members joined and room is full
-  io.to(filteredArray[0].roomId).emit("user join", "user joined room");
-
   // emit board status to both parties
   // in order to do that we need to broadcast on io instead of individual socket!
   io.to(filteredArray[0].roomId).emit("initialBoard", filteredArray[0].board);
+
+  // inform frontend that both members joined and room is full
+  io.to(filteredArray[0].roomId).emit("user join", "user joined room");
 }
 
 export { roomCheck };
