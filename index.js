@@ -5,7 +5,6 @@ import { dirname, join } from "node:path";
 import { Server } from "socket.io";
 import cors from "cors";
 import { roomCheck, roomExtractor } from "./utils/roomHelpers.js";
-import { execPath } from "node:process";
 import {
   disableMoveForCurrentSocket,
   enableMoveForNext,
@@ -15,18 +14,19 @@ import {
   sendNewBoard,
   winCheck,
 } from "./utils/gameLogic.js";
+import "dotenv/config";
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
-  cors: { origin: "http://localhost:5173", methods: ["GET", "POST"] },
+  cors: { origin: process.env.LOCAL_URL, methods: ["GET", "POST"] },
 });
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // cors setup
 const corsOptions = {
-  origin: ["http://localhost:5173"],
+  origin: [process.env.LOCAL_URL],
   optionSuccessStatus: 200,
 };
 
@@ -42,12 +42,6 @@ app.get("/test", (req, res) => {
 
 // we do it in memory for now
 let connectedUsers = [];
-
-// room structure:
-// roomid
-// user one id
-// user two id
-
 let roomInfo = [];
 
 function sendRoomId(socketid) {
@@ -112,7 +106,7 @@ io.on("connection", (socket) => {
       // if no winner, and only one item in queue left, means this is a draw
       if (room.moveQueue.length === 1) {
         io.to(room.roomId).emit("firstMove", false);
-        io.to(room.roomId).emit("gameOver", "DRAW!");
+        io.to(room.roomId).emit("gameDraw", true);
       }
 
       if (check) {
@@ -145,10 +139,7 @@ io.on("connection", (socket) => {
         if (element != socket.id) {
           const foundSocket = io.sockets.sockets.get(element);
           foundSocket.leave(found.roomId);
-          foundSocket.emit(
-            "warning",
-            `The other player has quit the match! You win!`
-          );
+          foundSocket.emit("player disconnect", true);
         }
       });
 
