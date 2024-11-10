@@ -15,6 +15,7 @@ import {
   winCheck,
 } from "./utils/gameLogic.js";
 import "dotenv/config";
+import { apiRouter } from "./routes/apiRouter.js";
 
 const app = express();
 const server = createServer(app);
@@ -32,13 +33,12 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.get("/", (req, res) => {
-  //   res.sendFile(join(__dirname, "index.html"));
+app.get("/test", (req, res) => {
+  res.send("XD");
 });
 
-app.get("/test", (req, res) => {
-  res.json("Hey");
-});
+// for API routing
+app.use("/api", apiRouter);
 
 // we do it in memory for now
 let connectedUsers = [];

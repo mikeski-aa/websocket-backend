@@ -4,7 +4,7 @@
   "description": "my first socket.io app",
   "type": "module",
   "scripts": {
-    "devstart": "nodemon index"
+    "devstart": "nodemon server"
   },
   "dependencies": {
     "@eslint/js": "^9.14.0",
