@@ -5,4 +5,7 @@ async function testController(req, res) {
   res.send(hash);
 }
 
+// need to register a new user
+async function registerUser(req, res) {}
+
 export { testController };
