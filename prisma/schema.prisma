@@ -18,7 +18,7 @@ model Users {
   id Int @id @default(autoincrement())
   username String @unique
   hash String 
-  gameswon Int
-  gameslost Int 
-  winstreak Int 
+  gameswon Int @default(0)
+  gameslost Int @default(0)
+  winstreak Int @default(0)
 }
