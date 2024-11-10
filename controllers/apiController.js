@@ -15,7 +15,7 @@ async function registerUser(req, res) {
 
   const result = await createUser(req.body.username, hash);
 
-  res.send(result);
+  return res.json(result);
 }
 
 export { testController, registerUser };
