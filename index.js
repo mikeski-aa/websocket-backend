@@ -9,6 +9,7 @@ import { execPath } from "node:process";
 import {
   disableMoveForCurrentSocket,
   enableMoveForNext,
+  gameOverSend,
   moveCheck,
   moveQueueUp,
   sendNewBoard,
@@ -104,13 +105,9 @@ io.on("connection", (socket) => {
     const check = moveCheck(room, coordinates);
     const isOver = winCheck(room);
 
-    console.log("////////////////////////////////// HEELLOO?");
     if (isOver) {
-      console.log("game oveR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       sendNewBoard(room, io);
-      io.to(room.roomId).emit("firstMove", false);
-      io.to(room.roomId).emit("gameOver", `Game over ${socket.id} wins!`);
-      console.log(room.moveQueue);
+      gameOverSend(room, socket, io);
     } else {
       // if no winner, and only one item in queue left, means this is a draw
       if (room.moveQueue.length === 1) {
@@ -157,10 +154,6 @@ io.on("connection", (socket) => {
     }
 
     socket.emit("rooms", roomInfo);
-    console.log("////////");
-    console.log("room after delete: ");
-    console.log(roomInfo);
-
     // Log active rooms when a new user disconnects
     logActiveRooms(io);
   });

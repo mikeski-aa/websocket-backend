@@ -88,6 +88,20 @@ function winCheck(room) {
   return isWinner;
 }
 
+// on game end
+// inform winner they won
+// inform loser they lost
+// stop the game interactions
+// close websocket
+function gameOverSend(room, socket, io) {
+  io.to(room.roomId).emit("firstMove", false);
+  const filteredSocketId = room.users.filter((element) => element != socket.id);
+  // filtered socket id returns array of length 1 hence [0] is required
+  const otherSocket = io.sockets.sockets.get(filteredSocketId[0]);
+  socket.emit("gameOver", "You win!");
+  otherSocket.emit("gameOver", "You lose!");
+}
+
 export {
   moveCheck,
   disableMoveForCurrentSocket,
@@ -95,22 +109,5 @@ export {
   enableMoveForNext,
   sendNewBoard,
   winCheck,
+  gameOverSend,
 };
-
-let board = [
-  { x: 0, y: 0, marker: "X" },
-  { x: 1, y: 0, marker: "O" },
-  { x: 2, y: 0, marker: "X" },
-  { x: 0, y: 1, marker: "O" },
-  { x: 1, y: 1, marker: "X" },
-  { x: 2, y: 1, marker: "" },
-  { x: 0, y: 2, marker: "O" },
-  { x: 1, y: 2, marker: "O" },
-  { x: 2, y: 2, marker: "X" },
-];
-
-let room = {
-  board: board,
-};
-
-// winCheck(room);
