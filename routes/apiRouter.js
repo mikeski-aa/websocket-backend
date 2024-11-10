@@ -10,6 +10,7 @@ apiRouter.get("/", (req, res) => {
 
 apiRouter.get("/test", testController);
 
+// create a new user
 apiRouter.post("/register", validateRegInput, registerUser);
 
 export { apiRouter };

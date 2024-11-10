@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { generateHash } from "../utils/passwordHandler.js";
-import { createUser } from "../services/logregCalls.js";
+import { createUser } from "../services/userCalls.js";
 
 async function testController(req, res) {
   const hash = bcrypt.hashSync("B4c0//", 10);

@@ -2,7 +2,9 @@ import bcrypt from "bcryptjs";
 
 // generate hash for DB input
 function generateHash(password) {
-  const salt = bcrypt.genSaltSync(process.env.SALT);
+  console.log("genHash");
+  const salt = bcrypt.genSaltSync(+process.env.SALT);
+  console.log(salt);
   const hash = bcrypt.hashSync(password, salt);
 
   console.log(hash);
