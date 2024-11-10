@@ -98,8 +98,8 @@ function gameOverSend(room, socket, io) {
   const filteredSocketId = room.users.filter((element) => element != socket.id);
   // filtered socket id returns array of length 1 hence [0] is required
   const otherSocket = io.sockets.sockets.get(filteredSocketId[0]);
-  socket.emit("gameOver", "You win!");
-  otherSocket.emit("gameOver", "You lose!");
+  socket.emit("gameWon", true);
+  otherSocket.emit("gameLost", true);
 }
 
 export {

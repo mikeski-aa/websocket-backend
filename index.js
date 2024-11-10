@@ -145,8 +145,10 @@ io.on("connection", (socket) => {
         if (element != socket.id) {
           const foundSocket = io.sockets.sockets.get(element);
           foundSocket.leave(found.roomId);
-          foundSocket.emit("warning", `Room is being closed! ${found.roomId}`);
-          // foundSocket.disconnect();
+          foundSocket.emit(
+            "warning",
+            `The other player has quit the match! You win!`
+          );
         }
       });
 
