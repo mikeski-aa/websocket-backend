@@ -1,7 +1,5 @@
 import express from "express";
 import { createServer } from "node:http";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
 import { Server } from "socket.io";
 import cors from "cors";
 import { roomCheck, roomExtractor } from "./utils/roomHelpers.js";
@@ -23,7 +21,8 @@ const io = new Server(server, {
   cors: { origin: process.env.LOCAL_URL, methods: ["GET", "POST"] },
 });
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+// parsing json bodies
+app.use(express.json());
 
 // cors setup
 const corsOptions = {
@@ -32,10 +31,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-app.get("/test", (req, res) => {
-  res.send("XD");
-});
 
 // for API routing
 app.use("/api", apiRouter);
@@ -160,6 +155,7 @@ function logActiveRooms(io) {
   });
 }
 
-server.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
   console.log("Server running on port 3000");
 });

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { testController } from "../controllers/apiController.js";
+import bcrypt from "bcryptjs";
 
 const apiRouter = Router();
 
