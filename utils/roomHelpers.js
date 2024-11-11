@@ -20,7 +20,7 @@ function roomCheck(socket, roomArray, io, userid) {
   if (filteredArray.length > 0) {
     socket.join(filteredArray[0].roomId);
     filteredArray[0].users.push(socket.id);
-    filteredArray[0].userids.push(userid);
+    // filteredArray[0].userids.push(userid);
 
     // inform both users that the other user has joined
     // pass X or Y to parties too
@@ -45,7 +45,7 @@ function createRoom(socket, userid) {
     users: [socket.id],
     board: genBoard(),
     moveQueue: [],
-    userids: [userid],
+    // userids: [userid],
   };
 
   return infoObject;

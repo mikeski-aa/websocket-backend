@@ -7,13 +7,13 @@ import {
   updateUserWins,
   updateUserLosses,
   updateUserDraws,
+  forceUpdateForDcLoss,
 } from "../controllers/apiController.js";
 import {
   validateLoginInput,
   validateRegInput,
 } from "../middleware/validateRegister.js";
 import { verifyTokenMiddleware } from "../middleware/verifyToken.js";
-import { updateLossesWithId } from "../services/gamesCalls.js";
 
 const apiRouter = Router();
 
@@ -42,6 +42,6 @@ apiRouter.put("/loss", verifyTokenMiddleware, updateUserLosses);
 apiRouter.put("/draw", verifyTokenMiddleware, updateUserDraws);
 
 // update losses for DC
-// apiRouter.put("/dcloss", );
+apiRouter.put("/dcloss", forceUpdateForDcLoss);
 
 export { apiRouter };

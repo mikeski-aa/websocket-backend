@@ -54,7 +54,7 @@ io.on("connection", (socket) => {
   socket.on("userInfo", (item) => {
     console.log("connected user id searching confirmed: ");
     console.log(item);
-    roomInfo = roomCheck(socket, roomInfo, io, item);
+    roomInfo = roomCheck(socket, roomInfo, io);
   });
 
   // when a new user connects we assign them to a game room.

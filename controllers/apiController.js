@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import {
   updateDraws,
   updateLosses,
+  updateLossesWithId,
   updateMaxStreak,
   updateWins,
 } from "../services/gamesCalls.js";
@@ -163,6 +164,22 @@ async function updateUserDraws(req, res) {
   });
 }
 
+async function forceUpdateForDcLoss(req, res) {
+  const response = await updateLossesWithId(req.body.id);
+
+  // if max streak not larger just update the regular
+  return res.json({
+    username: response.username,
+    id: response.id,
+    error: false,
+    gameswon: response.gameswon,
+    gameslost: response.gameslost,
+    gamesdrawn: response.gamesdrawn,
+    currentstreak: response.currentstreak,
+    maxstreak: response.maxstreak,
+  });
+}
+
 export {
   testController,
   registerUser,
@@ -171,4 +188,5 @@ export {
   updateUserWins,
   updateUserLosses,
   updateUserDraws,
+  forceUpdateForDcLoss,
 };
