@@ -13,6 +13,7 @@ import {
   validateRegInput,
 } from "../middleware/validateRegister.js";
 import { verifyTokenMiddleware } from "../middleware/verifyToken.js";
+import { updateLossesWithId } from "../services/gamesCalls.js";
 
 const apiRouter = Router();
 
@@ -39,5 +40,8 @@ apiRouter.put("/loss", verifyTokenMiddleware, updateUserLosses);
 
 // update draws
 apiRouter.put("/draw", verifyTokenMiddleware, updateUserDraws);
+
+// update losses for DC
+// apiRouter.put("/dcloss", );
 
 export { apiRouter };

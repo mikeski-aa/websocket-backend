@@ -54,23 +54,16 @@ io.on("connection", (socket) => {
   socket.on("userInfo", (item) => {
     console.log("connected user id searching confirmed: ");
     console.log(item);
-    userid = item;
+    roomInfo = roomCheck(socket, roomInfo, io, item);
   });
 
   // when a new user connects we assign them to a game room.
-  roomInfo = roomCheck(socket, roomInfo, io, userid);
+
   console.log(roomInfo);
   // reset userid to crazy value
-  userid = -1;
 
   // Log active rooms when a new user connects
   logActiveRooms(io);
-
-  console.log("///////////////////////////");
-  console.log(roomInfo);
-  console.log("///////////////////////////");
-
-  socket.emit("roomId", sendRoomId(socket.id));
 
   // emit rooms
   io.emit("rooms", roomInfo);
