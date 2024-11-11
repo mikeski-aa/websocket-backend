@@ -145,8 +145,8 @@ io.on("connection", (socket) => {
         if (element != socket.id) {
           const foundSocket = io.sockets.sockets.get(element);
           foundSocket.leave(found.roomId);
-          foundSocket.emit("player disconnect", true);
           foundSocket.emit("handleDisconnectLoss", found.userids);
+          foundSocket.emit("player disconnect", true);
         }
       });
 
