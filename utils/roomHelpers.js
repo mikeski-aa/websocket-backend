@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 import { genBoard } from "./genBoard.js";
 
-function roomCheck(socket, roomArray, io, userid) {
+function roomCheck(socket, roomArray, io, idData) {
   console.log(roomArray);
 
   // if room array is zero we create new room directly
   if (roomArray.length == 0) {
-    const newRooms = [createRoom(socket, userid)];
+    const newRooms = [createRoom(socket, idData)];
 
     return newRooms;
   }
@@ -20,7 +20,7 @@ function roomCheck(socket, roomArray, io, userid) {
   if (filteredArray.length > 0) {
     socket.join(filteredArray[0].roomId);
     filteredArray[0].users.push(socket.id);
-    // filteredArray[0].userids.push(userid);
+    filteredArray[0].userids.push(idData);
 
     // inform both users that the other user has joined
     // pass X or Y to parties too
@@ -29,14 +29,14 @@ function roomCheck(socket, roomArray, io, userid) {
     return roomArray;
   } else {
     // we create a new room
-    const newRooms = createRoom(socket, roomArray);
+    const newRooms = createRoom(socket, idData);
     roomArray.push(newRooms);
     return roomArray;
   }
 }
 
 // socket joins room generated.
-function createRoom(socket, userid) {
+function createRoom(socket, idData) {
   const room = uuidv4();
   socket.join(room);
 
@@ -45,7 +45,7 @@ function createRoom(socket, userid) {
     users: [socket.id],
     board: genBoard(),
     moveQueue: [],
-    // userids: [userid],
+    userids: [idData],
   };
 
   return infoObject;

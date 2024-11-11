@@ -40,11 +40,6 @@ let connectedUsers = [];
 let roomInfo = [];
 let userid;
 
-function sendRoomId(socketid) {
-  const found = roomInfo.find((element) => element.users.includes(socketid));
-  return found.roomId;
-}
-
 io.on("connection", (socket) => {
   // logs a user has connected to socket
   console.log("A user connected");
@@ -54,7 +49,14 @@ io.on("connection", (socket) => {
   socket.on("userInfo", (item) => {
     console.log("connected user id searching confirmed: ");
     console.log(item);
-    roomInfo = roomCheck(socket, roomInfo, io);
+    let idData;
+    if (item == null) {
+      idData = -1;
+    } else {
+      idData = item;
+    }
+
+    roomInfo = roomCheck(socket, roomInfo, io, idData);
   });
 
   // when a new user connects we assign them to a game room.
