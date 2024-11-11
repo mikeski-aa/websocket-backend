@@ -37,4 +37,23 @@ async function updateMaxStreak(username, currentstreak) {
   }
 }
 
-export { updateWins, updateMaxStreak };
+async function updateLosses(username) {
+  try {
+    const response = await prisma.Users.update({
+      where: {
+        username: username,
+      },
+      data: {
+        gameslost: { increment: 1 },
+        currentstreak: 0,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    return { error: true, errorMessage: "Error updating user" };
+  }
+}
+
+export { updateWins, updateMaxStreak, updateLosses };

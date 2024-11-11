@@ -5,6 +5,7 @@ import {
   userLogin,
   oneClickLogin,
   updateUserWins,
+  updateUserLosses,
 } from "../controllers/apiController.js";
 import {
   validateLoginInput,
@@ -31,6 +32,8 @@ apiRouter.get("/token", oneClickLogin);
 
 // update wins
 apiRouter.put("/wins", verifyTokenMiddleware, updateUserWins);
+
 // update losses
+apiRouter.put("/loss", verifyTokenMiddleware, updateUserLosses);
 
 export { apiRouter };

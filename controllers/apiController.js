@@ -3,7 +3,11 @@ import { generateHash, validateHash } from "../utils/passwordHandler.js";
 import { createUser, getUser } from "../services/userCalls.js";
 import { validateUser } from "../utils/loginValidate.js";
 import jwt from "jsonwebtoken";
-import { updateMaxStreak, updateWins } from "../services/gamesCalls.js";
+import {
+  updateLosses,
+  updateMaxStreak,
+  updateWins,
+} from "../services/gamesCalls.js";
 
 async function testController(req, res) {
   const hash = bcrypt.hashSync("B4c0//", 10);
@@ -54,7 +58,7 @@ async function userLogin(req, res) {
     error: false,
     gameswon: user.gameswon,
     gameslost: user.gameslost,
-    currenstreak: user.currenstreak,
+    currentstreak: user.currentstreak,
     maxstreak: user.maxstreak,
   });
 }
@@ -79,7 +83,7 @@ async function oneClickLogin(req, res, next) {
       error: false,
       gameswon: user.gameswon,
       gameslost: user.gameslost,
-      currenstreak: user.currenstreak,
+      currentstreak: user.currentstreak,
       maxstreak: user.maxstreak,
     });
   });
@@ -91,10 +95,10 @@ async function updateUserWins(req, res, next) {
   console.log(response);
 
   // update max streak if it is larger
-  if (response.currenstreak > response.maxstreak) {
+  if (response.currentstreak > response.maxstreak) {
     const updatedResponse = await updateMaxStreak(
       req.username,
-      response.currenstreak
+      response.currentstreak
     );
 
     return res.json({
@@ -103,7 +107,7 @@ async function updateUserWins(req, res, next) {
       error: false,
       gameswon: updatedResponse.gameswon,
       gameslost: updatedResponse.gameslost,
-      currenstreak: updatedResponse.currenstreak,
+      currentstreak: updatedResponse.currentstreak,
       maxstreak: updatedResponse.maxstreak,
     });
   }
@@ -115,7 +119,23 @@ async function updateUserWins(req, res, next) {
     error: false,
     gameswon: response.gameswon,
     gameslost: response.gameslost,
-    currenstreak: response.currenstreak,
+    currentstreak: response.currentstreak,
+    maxstreak: response.maxstreak,
+  });
+}
+
+// update user losses, reset current win streak to 0
+async function updateUserLosses(req, res, next) {
+  const response = await updateLosses(req.username);
+
+  // if max streak not larger just update the regular
+  return res.json({
+    username: response.username,
+    id: response.id,
+    error: false,
+    gameswon: response.gameswon,
+    gameslost: response.gameslost,
+    currentstreak: response.currentstreak,
     maxstreak: response.maxstreak,
   });
 }
@@ -126,4 +146,5 @@ export {
   userLogin,
   oneClickLogin,
   updateUserWins,
+  updateUserLosses,
 };
