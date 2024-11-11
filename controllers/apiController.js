@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
-import { generateHash } from "../utils/passwordHandler.js";
+import { generateHash, validateHash } from "../utils/passwordHandler.js";
 import { createUser } from "../services/userCalls.js";
+import { validateUser } from "../utils/loginValidate.js";
+import jwt from "jsonwebtoken";
 
 async function testController(req, res) {
   const hash = bcrypt.hashSync("B4c0//", 10);
@@ -18,4 +20,28 @@ async function registerUser(req, res) {
   return res.json(result);
 }
 
-export { testController, registerUser };
+async function userLogin(req, res) {
+  const user = validateUser(req.body.username);
+
+  if (!user) {
+    return res.status(400).json({ error: "No user found" });
+  }
+
+  const pwValidate = validateHash(req.body.password, user.hash);
+
+  if (!pwValidate) {
+    return res.status(400).json({ error: "Invalid login" });
+  }
+
+  const payload = {
+    username: user.username,
+  };
+
+  const token = jwt.sign(payload, process.env.SECRET_KEY, {
+    expiresIn: "336h",
+  });
+
+  return res.json({ user: user, token: token });
+}
+
+export { testController, registerUser, userLogin };

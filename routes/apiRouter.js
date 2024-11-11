@@ -1,6 +1,13 @@
 import { Router } from "express";
-import { registerUser, testController } from "../controllers/apiController.js";
-import { validateRegInput } from "../middleware/validateRegister.js";
+import {
+  registerUser,
+  testController,
+  userLogin,
+} from "../controllers/apiController.js";
+import {
+  validateLoginInput,
+  validateRegInput,
+} from "../middleware/validateRegister.js";
 
 const apiRouter = Router();
 
@@ -12,5 +19,8 @@ apiRouter.get("/test", testController);
 
 // create a new user
 apiRouter.post("/register", validateRegInput, registerUser);
+
+// log in
+apiRouter.get("/login", validateLoginInput, userLogin);
 
 export { apiRouter };
