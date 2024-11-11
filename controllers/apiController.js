@@ -17,12 +17,14 @@ async function registerUser(req, res) {
 
   const result = await createUser(req.body.username, hash);
 
-  return res.json(result);
+  return res.json({ username: result.username, id: result.id, error: false });
 }
 
+// user login
 async function userLogin(req, res) {
-  const user = validateUser(req.body.username);
-
+  console.log(req.body);
+  const user = await validateUser(req.body.username);
+  console.log(user);
   if (!user) {
     return res.status(400).json({ error: "No user found" });
   }
@@ -30,7 +32,9 @@ async function userLogin(req, res) {
   const pwValidate = validateHash(req.body.password, user.hash);
 
   if (!pwValidate) {
-    return res.status(400).json({ error: "Invalid login" });
+    return res
+      .status(400)
+      .json({ error: true, errorMessage: "Password validation failed" });
   }
 
   const payload = {
@@ -41,7 +45,12 @@ async function userLogin(req, res) {
     expiresIn: "336h",
   });
 
-  return res.json({ user: user, token: token });
+  return res.json({
+    username: user.username,
+    id: user.id,
+    token: token,
+    error: false,
+  });
 }
 
 export { testController, registerUser, userLogin };

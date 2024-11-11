@@ -1,7 +1,7 @@
 import { getUser } from "../services/userCalls.js";
 
-async function validateUser(req, res, next) {
-  const user = await getUser(req.body.username);
+async function validateUser(username) {
+  const user = await getUser(username);
 
   if (user != null) {
     return user;

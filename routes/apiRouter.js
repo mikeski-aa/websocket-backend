@@ -21,6 +21,6 @@ apiRouter.get("/test", testController);
 apiRouter.post("/register", validateRegInput, registerUser);
 
 // log in
-apiRouter.get("/login", validateLoginInput, userLogin);
+apiRouter.post("/login", validateLoginInput, userLogin);
 
 export { apiRouter };
