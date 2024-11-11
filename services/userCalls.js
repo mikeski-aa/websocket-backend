@@ -29,4 +29,24 @@ async function getUser(username) {
   }
 }
 
+async function getAllUsers() {
+  try {
+    const result = await prisma.Users.findMany({
+      select: {
+        username: true,
+        gameswon: true,
+        gameslost: true,
+        currentstreak: true,
+        maxstreak: true,
+        hash: false,
+      },
+    });
+
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+}
+getAllUsers();
 export { createUser, getUser };

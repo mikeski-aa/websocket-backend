@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { generateHash, validateHash } from "../utils/passwordHandler.js";
-import { createUser, getUser } from "../services/userCalls.js";
+import { createUser, getAllUsers, getUser } from "../services/userCalls.js";
 import { validateUser } from "../utils/loginValidate.js";
 import jwt from "jsonwebtoken";
 import {
@@ -180,6 +180,12 @@ async function forceUpdateForDcLoss(req, res) {
   });
 }
 
+async function getLeaderboard() {
+  const leaderboards = await getAllUsers();
+
+  return res.json(leaderboards);
+}
+
 export {
   testController,
   registerUser,
@@ -189,4 +195,5 @@ export {
   updateUserLosses,
   updateUserDraws,
   forceUpdateForDcLoss,
+  getLeaderboard,
 };

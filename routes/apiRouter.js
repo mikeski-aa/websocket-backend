@@ -8,6 +8,7 @@ import {
   updateUserLosses,
   updateUserDraws,
   forceUpdateForDcLoss,
+  getLeaderboard,
 } from "../controllers/apiController.js";
 import {
   validateLoginInput,
@@ -43,5 +44,8 @@ apiRouter.put("/draw", verifyTokenMiddleware, updateUserDraws);
 
 // update losses for DC
 apiRouter.put("/dcloss", forceUpdateForDcLoss);
+
+// get leaderboard
+apiRouter.get("/leaderboard", getLeaderboard);
 
 export { apiRouter };
