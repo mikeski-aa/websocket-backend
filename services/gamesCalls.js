@@ -56,4 +56,22 @@ async function updateLosses(username) {
   }
 }
 
-export { updateWins, updateMaxStreak, updateLosses };
+async function updateDraws(username) {
+  try {
+    const response = await prisma.Users.update({
+      where: {
+        username: username,
+      },
+      data: {
+        gamesdrawn: { increment: 1 },
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    return { error: true, errorMessage: "Error updating user" };
+  }
+}
+
+export { updateWins, updateMaxStreak, updateLosses, updateDraws };

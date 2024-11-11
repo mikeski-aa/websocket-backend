@@ -4,6 +4,7 @@ import { createUser, getUser } from "../services/userCalls.js";
 import { validateUser } from "../utils/loginValidate.js";
 import jwt from "jsonwebtoken";
 import {
+  updateDraws,
   updateLosses,
   updateMaxStreak,
   updateWins,
@@ -129,8 +130,25 @@ async function updateUserWins(req, res, next) {
 }
 
 // update user losses, reset current win streak to 0
-async function updateUserLosses(req, res, next) {
+async function updateUserLosses(req, res) {
   const response = await updateLosses(req.username);
+
+  // if max streak not larger just update the regular
+  return res.json({
+    username: response.username,
+    id: response.id,
+    error: false,
+    gameswon: response.gameswon,
+    gameslost: response.gameslost,
+    gamesdrawn: response.gamesdrawn,
+    currentstreak: response.currentstreak,
+    maxstreak: response.maxstreak,
+  });
+}
+
+// update user draws
+async function updateUserDraws(req, res) {
+  const response = await updateDraws(req.username);
 
   // if max streak not larger just update the regular
   return res.json({
@@ -152,4 +170,5 @@ export {
   oneClickLogin,
   updateUserWins,
   updateUserLosses,
+  updateUserDraws,
 };

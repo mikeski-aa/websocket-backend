@@ -38,6 +38,7 @@ app.use("/api", apiRouter);
 // we do it in memory for now
 let connectedUsers = [];
 let roomInfo = [];
+let userid;
 
 function sendRoomId(socketid) {
   const found = roomInfo.find((element) => element.users.includes(socketid));
@@ -49,8 +50,18 @@ io.on("connection", (socket) => {
   console.log("A user connected");
   connectedUsers.push(socket.id);
 
+  // user info being sent across see how we recieve it:
+  socket.on("userInfo", (item) => {
+    console.log("connected user id searching confirmed: ");
+    console.log(item);
+    userid = item;
+  });
+
   // when a new user connects we assign them to a game room.
-  roomInfo = roomCheck(socket, roomInfo, io);
+  roomInfo = roomCheck(socket, roomInfo, io, userid);
+  console.log(roomInfo);
+  // reset userid to crazy value
+  userid = -1;
 
   // Log active rooms when a new user connects
   logActiveRooms(io);
@@ -135,6 +146,7 @@ io.on("connection", (socket) => {
           const foundSocket = io.sockets.sockets.get(element);
           foundSocket.leave(found.roomId);
           foundSocket.emit("player disconnect", true);
+          foundSocket.emit("handleDisconnectLoss", found.userids);
         }
       });
 
