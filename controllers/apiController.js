@@ -58,6 +58,7 @@ async function userLogin(req, res) {
     error: false,
     gameswon: user.gameswon,
     gameslost: user.gameslost,
+    gamesdrawn: user.gamesdrawn,
     currentstreak: user.currentstreak,
     maxstreak: user.maxstreak,
   });
@@ -83,6 +84,7 @@ async function oneClickLogin(req, res, next) {
       error: false,
       gameswon: user.gameswon,
       gameslost: user.gameslost,
+      gamesdrawn: user.gamesdrawn,
       currentstreak: user.currentstreak,
       maxstreak: user.maxstreak,
     });
@@ -107,6 +109,7 @@ async function updateUserWins(req, res, next) {
       error: false,
       gameswon: updatedResponse.gameswon,
       gameslost: updatedResponse.gameslost,
+      gamesdrawn: response.gamesdrawn,
       currentstreak: updatedResponse.currentstreak,
       maxstreak: updatedResponse.maxstreak,
     });
@@ -119,6 +122,7 @@ async function updateUserWins(req, res, next) {
     error: false,
     gameswon: response.gameswon,
     gameslost: response.gameslost,
+    gamesdrawn: response.gamesdrawn,
     currentstreak: response.currentstreak,
     maxstreak: response.maxstreak,
   });
@@ -135,6 +139,7 @@ async function updateUserLosses(req, res, next) {
     error: false,
     gameswon: response.gameswon,
     gameslost: response.gameslost,
+    gamesdrawn: response.gamesdrawn,
     currentstreak: response.currentstreak,
     maxstreak: response.maxstreak,
   });

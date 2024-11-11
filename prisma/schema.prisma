@@ -20,6 +20,7 @@ model Users {
   hash String 
   gameswon Int @default(0)
   gameslost Int @default(0)
+  gamesdrawn Int @default(0)
   currentstreak Int @default(0)
   maxstreak Int @default(0)
 }
