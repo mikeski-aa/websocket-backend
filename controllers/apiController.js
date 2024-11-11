@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { generateHash, validateHash } from "../utils/passwordHandler.js";
-import { createUser } from "../services/userCalls.js";
+import { createUser, getUser } from "../services/userCalls.js";
 import { validateUser } from "../utils/loginValidate.js";
 import jwt from "jsonwebtoken";
 
@@ -46,11 +46,42 @@ async function userLogin(req, res) {
   });
 
   return res.json({
-    username: user.username,
-    id: user.id,
     token: token,
     error: false,
+    username: user.username,
+    id: user.id,
+    error: false,
+    gameswon: user.gameswon,
+    gameslost: user.gameslost,
+    currenstreak: user.currenstreak,
+    maxstreak: user.maxstreak,
   });
 }
 
-export { testController, registerUser, userLogin };
+async function verifyTokenMiddleware(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader.split("Bearer ")[1];
+  console.log(token);
+
+  jwt.verify(token, process.env.SECRET_KEY, async (err, decoded) => {
+    if (err) {
+      console.log("token error");
+      return console.log(err);
+    }
+
+    req.username = decoded.username;
+    const user = await getUser(decoded.username);
+
+    return res.json({
+      username: user.username,
+      id: user.id,
+      error: false,
+      gameswon: user.gameswon,
+      gameslost: user.gameslost,
+      currenstreak: user.currenstreak,
+      maxstreak: user.maxstreak,
+    });
+  });
+}
+
+export { testController, registerUser, userLogin, verifyTokenMiddleware };

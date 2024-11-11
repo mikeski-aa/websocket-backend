@@ -3,6 +3,7 @@ import {
   registerUser,
   testController,
   userLogin,
+  verifyTokenMiddleware,
 } from "../controllers/apiController.js";
 import {
   validateLoginInput,
@@ -22,5 +23,8 @@ apiRouter.post("/register", validateRegInput, registerUser);
 
 // log in
 apiRouter.post("/login", validateLoginInput, userLogin);
+
+// token test
+apiRouter.get("/token", verifyTokenMiddleware);
 
 export { apiRouter };
