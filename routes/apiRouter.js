@@ -3,12 +3,14 @@ import {
   registerUser,
   testController,
   userLogin,
-  verifyTokenMiddleware,
+  oneClickLogin,
+  updateUserWins,
 } from "../controllers/apiController.js";
 import {
   validateLoginInput,
   validateRegInput,
 } from "../middleware/validateRegister.js";
+import { verifyTokenMiddleware } from "../middleware/verifyToken.js";
 
 const apiRouter = Router();
 
@@ -25,6 +27,10 @@ apiRouter.post("/register", validateRegInput, registerUser);
 apiRouter.post("/login", validateLoginInput, userLogin);
 
 // token test
-apiRouter.get("/token", verifyTokenMiddleware);
+apiRouter.get("/token", oneClickLogin);
+
+// update wins
+apiRouter.put("/wins", verifyTokenMiddleware, updateUserWins);
+// update losses
 
 export { apiRouter };

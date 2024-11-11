@@ -3,6 +3,7 @@ import { generateHash, validateHash } from "../utils/passwordHandler.js";
 import { createUser, getUser } from "../services/userCalls.js";
 import { validateUser } from "../utils/loginValidate.js";
 import jwt from "jsonwebtoken";
+import { updateMaxStreak, updateWins } from "../services/gamesCalls.js";
 
 async function testController(req, res) {
   const hash = bcrypt.hashSync("B4c0//", 10);
@@ -58,7 +59,7 @@ async function userLogin(req, res) {
   });
 }
 
-async function verifyTokenMiddleware(req, res, next) {
+async function oneClickLogin(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader.split("Bearer ")[1];
   console.log(token);
@@ -84,4 +85,45 @@ async function verifyTokenMiddleware(req, res, next) {
   });
 }
 
-export { testController, registerUser, userLogin, verifyTokenMiddleware };
+async function updateUserWins(req, res, next) {
+  const response = await updateWins(req.username);
+
+  console.log(response);
+
+  // update max streak if it is larger
+  if (response.currenstreak > response.maxstreak) {
+    const updatedResponse = await updateMaxStreak(
+      req.username,
+      response.currenstreak
+    );
+
+    return res.json({
+      username: updatedResponse.username,
+      id: updatedResponse.id,
+      error: false,
+      gameswon: updatedResponse.gameswon,
+      gameslost: updatedResponse.gameslost,
+      currenstreak: updatedResponse.currenstreak,
+      maxstreak: updatedResponse.maxstreak,
+    });
+  }
+
+  // if max streak not larger just update the regular
+  return res.json({
+    username: response.username,
+    id: response.id,
+    error: false,
+    gameswon: response.gameswon,
+    gameslost: response.gameslost,
+    currenstreak: response.currenstreak,
+    maxstreak: response.maxstreak,
+  });
+}
+
+export {
+  testController,
+  registerUser,
+  userLogin,
+  oneClickLogin,
+  updateUserWins,
+};
