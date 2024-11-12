@@ -18,7 +18,10 @@ import { apiRouter } from "./routes/apiRouter.js";
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
-  cors: { origin: process.env.LOCAL_URL, methods: ["GET", "POST"] },
+  cors: {
+    origin: [process.env.LOCAL_URL, process.env.NONLOCAL_URL],
+    methods: ["GET", "POST"],
+  },
 });
 
 // parsing json bodies
@@ -26,7 +29,7 @@ app.use(express.json());
 
 // cors setup
 const corsOptions = {
-  origin: [process.env.LOCAL_URL],
+  origin: [process.env.LOCAL_URL, process.env.NONLOCAL_URL],
   optionSuccessStatus: 200,
 };
 
