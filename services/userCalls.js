@@ -40,6 +40,9 @@ async function getAllUsers() {
         maxstreak: true,
         hash: false,
       },
+      orderBy: {
+        gameswon: "desc",
+      },
     });
 
     console.log(result);
@@ -49,4 +52,4 @@ async function getAllUsers() {
   }
 }
 getAllUsers();
-export { createUser, getUser };
+export { createUser, getUser, getAllUsers };

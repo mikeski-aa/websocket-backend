@@ -46,6 +46,6 @@ apiRouter.put("/draw", verifyTokenMiddleware, updateUserDraws);
 apiRouter.put("/dcloss", forceUpdateForDcLoss);
 
 // get leaderboard
-apiRouter.get("/leaderboard", getLeaderboard);
+apiRouter.get("/leaderboards", getLeaderboard);
 
 export { apiRouter };
