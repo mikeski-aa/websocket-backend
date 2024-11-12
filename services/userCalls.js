@@ -37,6 +37,7 @@ async function getAllUsers() {
         gameswon: true,
         gameslost: true,
         currentstreak: true,
+        gamesdrawn: true,
         maxstreak: true,
         hash: false,
       },
