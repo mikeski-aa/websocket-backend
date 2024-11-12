@@ -180,7 +180,7 @@ async function forceUpdateForDcLoss(req, res) {
   });
 }
 
-async function getLeaderboard() {
+async function getLeaderboard(req, res, next) {
   const leaderboards = await getAllUsers();
 
   return res.json(leaderboards);
